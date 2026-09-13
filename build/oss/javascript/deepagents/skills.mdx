@@ -3,26 +3,26 @@ title: Skills
 description: Learn how to extend your deep agent's capabilities with skills
 ---
 
-import SkillsUsageTabsPy from '/snippets/skills-usage-tabs-py.mdx';
-import SkillsUsageTabsJs from '/snippets/skills-usage-tabs-js.mdx';
-import SkillsSandboxPy from '/snippets/code-samples/skills-sandbox-py.mdx';
-import SkillsSandboxJs from '/snippets/code-samples/skills-sandbox-js.mdx';
-import BackendReadonlySkillsPy from '/snippets/code-samples/backend-readonly-skills-py.mdx';
-import BackendReadonlySkillsJs from '/snippets/code-samples/backend-readonly-skills-js.mdx';
-import SkillsCreateAgentPy from '/snippets/code-samples/skills-create-agent-py.mdx';
-import SkillsCreateAgentJs from '/snippets/code-samples/skills-create-agent-js.mdx';
-import SkillsInvokePy from '/snippets/code-samples/skills-invoke-py.mdx';
-import SkillsInvokeJs from '/snippets/code-samples/skills-invoke-js.mdx';
-import SkillsDynamicListsPy from '/snippets/code-samples/skills-dynamic-lists-py.mdx';
-import SkillsDynamicListsJs from '/snippets/code-samples/skills-dynamic-lists-js.mdx';
-import SkillsNamespacedPy from '/snippets/code-samples/skills-namespaced-py.mdx';
-import SkillsNamespacedJs from '/snippets/code-samples/skills-namespaced-js.mdx';
-import SkillsSubagentsPy from '/snippets/code-samples/skills-subagents-py.mdx';
-import SkillsSubagentsJs from '/snippets/code-samples/skills-subagents-js.mdx';
-import SkillsApprovalPy from '/snippets/code-samples/skills-approval-py.mdx';
-import SkillsApprovalJs from '/snippets/code-samples/skills-approval-js.mdx';
-import SkillsPersonalWritablePy from '/snippets/code-samples/skills-personal-writable-py.mdx';
-import SkillsPersonalWritableJs from '/snippets/code-samples/skills-personal-writable-js.mdx';
+import SkillsUsageTabsPy from '/snippets/javascript/skills-usage-tabs-py.mdx';
+import SkillsUsageTabsJs from '/snippets/javascript/skills-usage-tabs-js.mdx';
+import SkillsSandboxPy from '/snippets/javascript/code-samples/skills-sandbox-py.mdx';
+import SkillsSandboxJs from '/snippets/javascript/code-samples/skills-sandbox-js.mdx';
+import BackendReadonlySkillsPy from '/snippets/javascript/code-samples/backend-readonly-skills-py.mdx';
+import BackendReadonlySkillsJs from '/snippets/javascript/code-samples/backend-readonly-skills-js.mdx';
+import SkillsCreateAgentPy from '/snippets/javascript/code-samples/skills-create-agent-py.mdx';
+import SkillsCreateAgentJs from '/snippets/javascript/code-samples/skills-create-agent-js.mdx';
+import SkillsInvokePy from '/snippets/javascript/code-samples/skills-invoke-py.mdx';
+import SkillsInvokeJs from '/snippets/javascript/code-samples/skills-invoke-js.mdx';
+import SkillsDynamicListsPy from '/snippets/javascript/code-samples/skills-dynamic-lists-py.mdx';
+import SkillsDynamicListsJs from '/snippets/javascript/code-samples/skills-dynamic-lists-js.mdx';
+import SkillsNamespacedPy from '/snippets/javascript/code-samples/skills-namespaced-py.mdx';
+import SkillsNamespacedJs from '/snippets/javascript/code-samples/skills-namespaced-js.mdx';
+import SkillsSubagentsPy from '/snippets/javascript/code-samples/skills-subagents-py.mdx';
+import SkillsSubagentsJs from '/snippets/javascript/code-samples/skills-subagents-js.mdx';
+import SkillsApprovalPy from '/snippets/javascript/code-samples/skills-approval-py.mdx';
+import SkillsApprovalJs from '/snippets/javascript/code-samples/skills-approval-js.mdx';
+import SkillsPersonalWritablePy from '/snippets/javascript/code-samples/skills-personal-writable-py.mdx';
+import SkillsPersonalWritableJs from '/snippets/javascript/code-samples/skills-personal-writable-js.mdx';
 
 Skills package domain expertise, such as workflows, best practices, scripts, reference docs, and templates, into reusable directories. The agent gets a summary of the contents on startup and discovers and reads the contained files only when relevant.
 
@@ -126,6 +126,11 @@ Pass the path to your top-level skills directory in the `skills` argument when c
 
 This example uses `FilesystemBackend` to load skills from disk. For other storage options, including loading skills from remote sources, see [Backends and remote skill loading](#backends-and-remote-skill-loading).
 
+
+
+Each source path can point at a directory that contains skill directories, or directly at a skill directory with `SKILL.md`.
+
+
 <ParamField body="skills" type="list[str]" optional>
     List of skill source paths.
 
@@ -133,7 +138,9 @@ This example uses `FilesystemBackend` to load skills from disk. For other storag
 
     - If omitted, no skills are loaded.
     - When using `StateBackend` (default), provide skill files with `invoke(files={...})`. Use `create_file_data()` from `deepagents.backends.utils` to format file contents; raw strings are not supported.
-    - With `FilesystemBackend`, skills are loaded from disk relative to the backend's `root_dir`.
+
+    - With `FilesystemBackend` and `StoreBackend`, create the backend, call `backend.uploadFiles()` to add skill files, then pass the backend to `createDeepAgent`. For `FilesystemBackend`, use `virtualMode: true` to sandbox paths under `rootDir`. Skills already on disk under `rootDir` load without uploading.
+
 
     Later sources override earlier ones for skills with the same name (last one wins).
 
@@ -188,7 +195,7 @@ As the agent works through a task, it loads skill information in layers:
 
 </div>
 
-In Deep Agents, [`SkillsMiddleware`](https://reference.langchain.com/javascript/deepagents/middleware/createSkillsMiddleware) (part of the [default middleware stack](/oss/javascript/deepagents/customization#default-stack-main-agent) when you pass `skills`) handles the first two levels, with the third level being handled by the LLM:
+In Deep Agents, [`SkillsMiddleware`](https://reference.langchain.com/javascript/deepagents/middleware/createSkillsMiddleware) (part of the [Deep Agents stack](/oss/javascript/deepagents/customization#deep-agents-stack) when you pass `skills`) handles the first two levels, with the third level being handled by the LLM:
 
 1. **Discovery** (level 1): At agent start, the middleware scans the configured skill paths, parses each `SKILL.md` [frontmatter](#frontmatter-fields), and injects the [`name`](#frontmatter-fields) and [`description`](#frontmatter-fields) fields into the system prompt.
 2. **Read** (level 2): When the agent invokes a skill, it reads the full `SKILL.md` content via `read_file`.
@@ -340,7 +347,7 @@ This works well when skills live on disk or in a shared backend and you just nee
 <Note>
     The SDK only loads the sources you pass in `skills`. It does not automatically scan CLI directories such as `~/.deepagents/...` or `~/.agents/...`.
 
-    For CLI storage conventions, see [App data](/oss/javascript/deepagents/code/configuration#data-locations).
+    For CLI storage conventions, see [App data](/oss/deepagents/code/configuration#data-locations).
 
     <Accordion
         title="Emulating CLI source order in SDK"
@@ -545,11 +552,15 @@ Use [LangSmith](https://smith.langchain.com?utm_source=docs&utm_medium=cta&utm_c
 
 1. **Check the skill path.** Paths must use forward slashes and be relative to the backend root. With `FilesystemBackend`, the path is relative to `root_dir`. With `StateBackend`, pass skill files in `invoke(files={...})` using `create_file_data()`.
 
+
+
 2. **Validate `SKILL.md` [frontmatter](#frontmatter-fields).** The [`name`](#frontmatter-fields) must match the parent directory name and follow the [Agent Skills specification](https://agentskills.io/specification). Use the [`skills-ref` validation tool](https://github.com/agentskills/agentskills/tree/main/skills-ref) to check formatting.
 
 3. **Check file size.** Deep Agents skips `SKILL.md` files over 10 MB during discovery.
 
 4. **Check layered sources.** When the same skill name appears in multiple sources, the [last source wins](#usage). An older or empty skill from a later path can override the one you expect.
+
+
 
 ### Supporting files not found
 

@@ -4,13 +4,13 @@ description: Package per-provider and per-model defaults that Deep Agents applie
 tag: "Beta"
 ---
 
-import ProfilesHarnessRegisterPy from '/snippets/code-samples/profiles-harness-register-py.mdx';
-import ProfilesHarnessRegisterJs from '/snippets/code-samples/profiles-harness-register-js.mdx';
-import ProfilesProviderRegisterPy from '/snippets/code-samples/profiles-provider-register-py.mdx';
-import ProfilesLoadConfigPy from '/snippets/code-samples/profiles-load-config-py.mdx';
-import ProfilesLoadConfigJs from '/snippets/code-samples/profiles-load-config-js.mdx';
-import ProfilesSerializeJs from '/snippets/code-samples/profiles-serialize-js.mdx';
-import ProfilesPluginRegisterPy from '/snippets/code-samples/profiles-plugin-register-py.mdx';
+import ProfilesHarnessRegisterPy from '/snippets/javascript/code-samples/profiles-harness-register-py.mdx';
+import ProfilesHarnessRegisterJs from '/snippets/javascript/code-samples/profiles-harness-register-js.mdx';
+import ProfilesProviderRegisterPy from '/snippets/javascript/code-samples/profiles-provider-register-py.mdx';
+import ProfilesLoadConfigPy from '/snippets/javascript/code-samples/profiles-load-config-py.mdx';
+import ProfilesLoadConfigJs from '/snippets/javascript/code-samples/profiles-load-config-js.mdx';
+import ProfilesSerializeJs from '/snippets/javascript/code-samples/profiles-serialize-js.mdx';
+import ProfilesPluginRegisterPy from '/snippets/javascript/code-samples/profiles-plugin-register-py.mdx';
 
 
 
@@ -33,11 +33,11 @@ A harness profile describes prompt-assembly, tool-visibility, middleware, and de
 
 
 <ResponseField name="baseSystemPrompt" type="string">
-    Replace the base Deep Agents system prompt (`CUSTOM` in [Prompt assembly](/oss/javascript/deepagents/customization#prompt-assembly)).
+    Replace the base Deep Agents system prompt (the `base` key in [System prompt](/oss/javascript/deepagents/customization#system-prompt)).
 </ResponseField>
 
 <ResponseField name="systemPromptSuffix" type="string">
-    Append text to the assembled base prompt (`SUFFIX` in [Prompt assembly](/oss/javascript/deepagents/customization#prompt-assembly)); applied to the main agent, declarative subagents, and the auto-added general-purpose subagent.
+    Append text after the caller's `suffix`, placed last in the assembled system prompt. Applied to the main agent, declarative subagents, and the auto-added general-purpose subagent.
 </ResponseField>
 
 <ResponseField name="toolDescriptionOverrides" type="Record<string, string>">
@@ -64,7 +64,7 @@ A harness profile describes prompt-assembly, tool-visibility, middleware, and de
 
 
 <Note>
-    Caller-supplied `systemPrompt` always sits at the front of the assembled prompt, and `systemPromptSuffix` always sits at the end—regardless of which model is selected. The same overlay rules apply to subagents: each subagent re-runs profile resolution against its own model. See [Prompt assembly](/oss/javascript/deepagents/customization#prompt-assembly) for the full per-case breakdown (main agent, subagents, and the general-purpose subagent).
+    Caller-supplied `systemPrompt` always sits at the front of the assembled prompt, and `systemPromptSuffix` always sits at the end—regardless of which model is selected. The same overlay rules apply to subagents: each subagent re-runs profile resolution against its own model. See [System prompt](/oss/javascript/deepagents/customization#system-prompt) for the full per-case breakdown (main agent, subagents, and the general-purpose subagent).
 </Note>
 
 
@@ -100,7 +100,7 @@ Re-registering under an existing key merges the new profile on top of the prior 
 
 
 <Note>
-    There is no wildcard key that matches every provider. To apply the same overrides everywhere—say, dropping `TodoListMiddleware` regardless of which model is selected—register the profile under each provider key you use. Profiles are intended for adjustments that depend on the model being selected. Global adjustments that should apply regardless of model should be made on the `createDeepAgent` call site.
+    There is no wildcard key that matches every provider. To apply the same overrides everywhere—say, dropping `SummarizationMiddleware` regardless of which model is selected—register the profile under each provider key you use. Profiles are intended for adjustments that depend on the model being selected. Global adjustments that should apply regardless of model should be made on the `createDeepAgent` call site.
 </Note>
 
 

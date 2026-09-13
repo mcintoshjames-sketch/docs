@@ -3,25 +3,25 @@ title: Permissions
 description: Control filesystem access with declarative permission rules for Deep Agents
 ---
 
-import PermissionsBasicPy from '/snippets/code-samples/permissions-basic-py.mdx';
-import PermissionsBasicJs from '/snippets/code-samples/permissions-basic-js.mdx';
-import PermissionsIsolateWorkspacePy from '/snippets/code-samples/permissions-isolate-workspace-py.mdx';
-import PermissionsIsolateWorkspaceJs from '/snippets/code-samples/permissions-isolate-workspace-js.mdx';
-import PermissionsProtectFilesPy from '/snippets/code-samples/permissions-protect-files-py.mdx';
-import PermissionsProtectFilesJs from '/snippets/code-samples/permissions-protect-files-js.mdx';
-import PermissionsReadOnlyMemoryPy from '/snippets/code-samples/permissions-read-only-memory-py.mdx';
-import PermissionsReadOnlyMemoryJs from '/snippets/code-samples/permissions-read-only-memory-js.mdx';
-import PermissionsDenyAllPy from '/snippets/code-samples/permissions-deny-all-py.mdx';
-import PermissionsDenyAllJs from '/snippets/code-samples/permissions-deny-all-js.mdx';
-import PermissionsRuleOrderingPy from '/snippets/code-samples/permissions-rule-ordering-py.mdx';
-import PermissionsRuleOrderingJs from '/snippets/code-samples/permissions-rule-ordering-js.mdx';
-import PermissionsSubagentPy from '/snippets/code-samples/permissions-subagent-py.mdx';
-import PermissionsSubagentJs from '/snippets/code-samples/permissions-subagent-js.mdx';
-import PermissionsCompositeBackendPy from '/snippets/code-samples/permissions-composite-backend-py.mdx';
-import PermissionsCompositeBackendJs from '/snippets/code-samples/permissions-composite-backend-js.mdx';
-import PermissionsCompositeBackendInvalidPy from '/snippets/code-samples/permissions-composite-backend-invalid-py.mdx';
-import PermissionsInterruptPy from '/snippets/code-samples/permissions-interrupt-py.mdx';
-import PermissionsCompositeBackendInvalidJs from '/snippets/code-samples/permissions-composite-backend-invalid-js.mdx';
+import PermissionsBasicPy from '/snippets/python/code-samples/permissions-basic-py.mdx';
+import PermissionsBasicJs from '/snippets/python/code-samples/permissions-basic-js.mdx';
+import PermissionsIsolateWorkspacePy from '/snippets/python/code-samples/permissions-isolate-workspace-py.mdx';
+import PermissionsIsolateWorkspaceJs from '/snippets/python/code-samples/permissions-isolate-workspace-js.mdx';
+import PermissionsProtectFilesPy from '/snippets/python/code-samples/permissions-protect-files-py.mdx';
+import PermissionsProtectFilesJs from '/snippets/python/code-samples/permissions-protect-files-js.mdx';
+import PermissionsReadOnlyMemoryPy from '/snippets/python/code-samples/permissions-read-only-memory-py.mdx';
+import PermissionsReadOnlyMemoryJs from '/snippets/python/code-samples/permissions-read-only-memory-js.mdx';
+import PermissionsDenyAllPy from '/snippets/python/code-samples/permissions-deny-all-py.mdx';
+import PermissionsDenyAllJs from '/snippets/python/code-samples/permissions-deny-all-js.mdx';
+import PermissionsRuleOrderingPy from '/snippets/python/code-samples/permissions-rule-ordering-py.mdx';
+import PermissionsRuleOrderingJs from '/snippets/python/code-samples/permissions-rule-ordering-js.mdx';
+import PermissionsSubagentPy from '/snippets/python/code-samples/permissions-subagent-py.mdx';
+import PermissionsSubagentJs from '/snippets/python/code-samples/permissions-subagent-js.mdx';
+import PermissionsCompositeBackendPy from '/snippets/python/code-samples/permissions-composite-backend-py.mdx';
+import PermissionsCompositeBackendJs from '/snippets/python/code-samples/permissions-composite-backend-js.mdx';
+import PermissionsCompositeBackendInvalidPy from '/snippets/python/code-samples/permissions-composite-backend-invalid-py.mdx';
+import PermissionsInterruptPy from '/snippets/python/code-samples/permissions-interrupt-py.mdx';
+import PermissionsCompositeBackendInvalidJs from '/snippets/python/code-samples/permissions-composite-backend-invalid-js.mdx';
 
 Control which files and directories an agent can read or write to using declarative permission rules. Pass a list of rules to `permissions=` and the agent's built-in filesystem tools respect them.
 
@@ -80,7 +80,9 @@ Set `mode="interrupt"` to pause for human approval instead of allowing or denyin
 Interrupt-mode rules are wired into the agent's human-in-the-loop middleware automatically and merge with any `interrupt_on` you pass, so you handle and resume them the same way as tool-call interrupts. See [Human-in-the-loop](/oss/python/deepagents/human-in-the-loop) for the resume flow.
 
 <Note>
-Deleting a directory is all-or-nothing: `delete` checks the `write` permission on the target and every descendant path, and refuses the entire operation if any of them is denied, rather than removing part of the tree.
+Deleting a directory is all-or-nothing: `delete` checks the `write` permission on the target and every descendant path, and refuses the entire operation if any of them is denied, rather than removing part of the tree. `delete` applies this same conservative check to an existing empty directory, since it is still a directory rather than a confirmed leaf target.
+
+Deleting a plain file is an exact-match case instead: `delete` resolves the target the same way `write_file` and `edit_file` do, using first-match-wins evaluation, so an earlier, narrower `allow` rule wins over a later catch-all `deny`. `deepagents>=0.7.3` is required for this exact-match behavior.
 </Note>
 
 <Tip>

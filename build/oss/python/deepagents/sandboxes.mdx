@@ -4,21 +4,21 @@ sidebarTitle: Sandboxes
 description: Execute code in isolated environments with sandbox backends
 ---
 
-import SandboxesBasicTabsPy from '/snippets/sandboxes-basic-tabs-py.mdx';
-import DeepagentsSandboxBasicJs from '/snippets/code-samples/deepagents-sandbox-basic-js.mdx';
-import DeepagentsSandboxLifecycleFactoryThreadTs from '/snippets/code-samples/deepagents-sandbox-lifecycle-factory-thread-js.mdx';
-import DeepagentsSandboxLifecycleFactoryAssistantTs from '/snippets/code-samples/deepagents-sandbox-lifecycle-factory-assistant-js.mdx';
-import DeepagentsSandboxLifecycleFactoryThreadPy from '/snippets/code-samples/deepagents-sandbox-lifecycle-factory-thread-py.mdx';
-import DeepagentsSandboxLifecycleFactoryAssistantPy from '/snippets/code-samples/deepagents-sandbox-lifecycle-factory-assistant-py.mdx';
-import DeepagentsSandboxAsToolPy from '/snippets/code-samples/deepagents-sandbox-as-tool-py.mdx';
-import DeepagentsSandboxAsToolJs from '/snippets/code-samples/deepagents-sandbox-as-tool-js.mdx';
-import DeepagentsSandboxExecuteLangsmithPy from '/snippets/code-samples/deepagents-sandbox-execute-langsmith-py.mdx';
-import DeepagentsSandboxUploadJs from '/snippets/code-samples/deepagents-sandbox-upload-js.mdx';
-import DeepagentsSandboxDownloadJs from '/snippets/code-samples/deepagents-sandbox-download-js.mdx';
-import DeepagentsSandboxUploadLangsmithPy from '/snippets/code-samples/deepagents-sandbox-upload-langsmith-py.mdx';
-import DeepagentsSandboxDownloadLangsmithPy from '/snippets/code-samples/deepagents-sandbox-download-langsmith-py.mdx';
+import SandboxesBasicTabsPy from '/snippets/python/sandboxes-basic-tabs-py.mdx';
+import DeepagentsSandboxBasicJs from '/snippets/python/code-samples/deepagents-sandbox-basic-js.mdx';
+import DeepagentsSandboxLifecycleFactoryThreadTs from '/snippets/python/code-samples/deepagents-sandbox-lifecycle-factory-thread-js.mdx';
+import DeepagentsSandboxLifecycleFactoryAssistantTs from '/snippets/python/code-samples/deepagents-sandbox-lifecycle-factory-assistant-js.mdx';
+import DeepagentsSandboxLifecycleFactoryThreadPy from '/snippets/python/code-samples/deepagents-sandbox-lifecycle-factory-thread-py.mdx';
+import DeepagentsSandboxLifecycleFactoryAssistantPy from '/snippets/python/code-samples/deepagents-sandbox-lifecycle-factory-assistant-py.mdx';
+import DeepagentsSandboxAsToolPy from '/snippets/python/code-samples/deepagents-sandbox-as-tool-py.mdx';
+import DeepagentsSandboxAsToolJs from '/snippets/python/code-samples/deepagents-sandbox-as-tool-js.mdx';
+import DeepagentsSandboxExecuteLangsmithPy from '/snippets/python/code-samples/deepagents-sandbox-execute-langsmith-py.mdx';
+import DeepagentsSandboxUploadJs from '/snippets/python/code-samples/deepagents-sandbox-upload-js.mdx';
+import DeepagentsSandboxDownloadJs from '/snippets/python/code-samples/deepagents-sandbox-download-js.mdx';
+import DeepagentsSandboxUploadLangsmithPy from '/snippets/python/code-samples/deepagents-sandbox-upload-langsmith-py.mdx';
+import DeepagentsSandboxDownloadLangsmithPy from '/snippets/python/code-samples/deepagents-sandbox-download-langsmith-py.mdx';
 
-Agents generate code, interact with filesystems, and run shell commands. Because we can't predict what an agent might do, it's important that its environment is isolated so it can't access credentials, files, or the network. Sandboxes provide this isolation by creating a boundary between the agent's execution environment and your host system.
+Agents generate code, interact with filesystems, and run shell commands. Because you can't predict what an agent might do, it's important that its environment is isolated so it can't access credentials, files, or the network. Sandboxes provide this isolation by creating a boundary between the agent's execution environment and your host system.
 
 In Deep Agents, **sandboxes are [backends](/oss/python/deepagents/backends)** that define the environment where the agent operates. Unlike other backends (State, Filesystem, Store) which only expose file operations, sandbox backends also give the agent an `execute` tool for running shell commands. When you configure a sandbox backend, the agent gets:
 
@@ -59,10 +59,10 @@ This isolation is essential when agents run autonomously.
 Sandboxes are especially useful for:
 
 - Coding agents: Agents that run autonomously can use shell, git, clone repositories (many providers offer native git APIs, e.g., [Daytona's git operations](https://www.daytona.io/docs/en/git-operations/)), and run Docker-in-Docker for build and test pipelines
-- Data analysis agents—Load files, install data analysis libraries (pandas, numpy, etc.), run statistical calculations, and create outputs like PowerPoint presentations in a safe, isolated environment
+- Data analysis agents: Load files, install data analysis libraries (pandas, numpy, etc.), run statistical calculations, and create outputs like PowerPoint presentations in a safe, isolated environment
 
 <Tip>
-    **Using Deep Agents Code?** Deep Agents Code has built-in sandbox support via the `--sandbox` flag. See [Use remote sandboxes](/oss/python/deepagents/code/remote-sandboxes) for Deep Agents Code-specific setup, flags (`--sandbox-id`, `--sandbox-setup`), and examples.
+    **Using Deep Agents Code?** Deep Agents Code has built-in sandbox support via the `--sandbox` flag. See [Use remote sandboxes](/oss/deepagents/code/remote-sandboxes) for Deep Agents Code-specific setup, flags (`--sandbox-id`, `--sandbox-setup`), and examples.
 </Tip>
 
 <Note>
@@ -87,11 +87,6 @@ We recommend you also set up [LangSmith Engine](/langsmith/engine), which monito
 ## Available providers
 
 For provider-specific setup, authentication, and lifecycle details, see [sandbox integrations](/oss/python/integrations/sandboxes).
-
-
-
-
-Don't see your provider? You can implement your own sandbox backend. See [Contributing a sandbox integration](/oss/python/contributing/integrations-langchain).
 
 ## Lifecycle and scoping
 
@@ -394,7 +389,7 @@ You can also call the backend `execute()` method directly in your application co
 
         from langchain_vercel_sandbox import VercelSandbox
 
-        sandbox = Sandbox.create()
+        sandbox = Sandbox.create(runtime="python3.13")
         backend = VercelSandbox(sandbox=sandbox)
 
         try:
@@ -625,7 +620,7 @@ Use `upload_files()` to populate the sandbox before the agent runs. Paths must b
 
         from langchain_vercel_sandbox import VercelSandbox
 
-        sandbox = Sandbox.create()
+        sandbox = Sandbox.create(runtime="python3.13")
         backend = VercelSandbox(sandbox=sandbox)
 
         backend.upload_files(
@@ -797,7 +792,7 @@ Use `download_files()` to retrieve files from the sandbox after the agent finish
 
         from langchain_vercel_sandbox import VercelSandbox
 
-        sandbox = Sandbox.create()
+        sandbox = Sandbox.create(runtime="python3.13")
         backend = VercelSandbox(sandbox=sandbox)
 
         results = backend.download_files(["/src/index.py", "/output.txt"])

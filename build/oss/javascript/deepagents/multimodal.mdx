@@ -4,12 +4,12 @@ sidebarTitle: Multimodality
 description: Use images, audio, video, and documents with Deep Agents when your model supports multimodal inputs and tool results
 ---
 
-import MultimodalSummarizationPy from '/snippets/code-samples/multimodal-summarization-py.mdx';
-import MultimodalSummarizationJs from '/snippets/code-samples/multimodal-summarization-js.mdx';
-import MultimodalUserInputPy from '/snippets/code-samples/multimodal-user-input-py.mdx';
-import MultimodalUserInputJs from '/snippets/code-samples/multimodal-user-input-js.mdx';
-import MultimodalCaptureScreenshotPy from '/snippets/code-samples/multimodal-capture-screenshot-py.mdx';
-import MultimodalCaptureScreenshotJs from '/snippets/code-samples/multimodal-capture-screenshot-js.mdx';
+import MultimodalSummarizationPy from '/snippets/javascript/code-samples/multimodal-summarization-py.mdx';
+import MultimodalSummarizationJs from '/snippets/javascript/code-samples/multimodal-summarization-js.mdx';
+import MultimodalUserInputPy from '/snippets/javascript/code-samples/multimodal-user-input-py.mdx';
+import MultimodalUserInputJs from '/snippets/javascript/code-samples/multimodal-user-input-js.mdx';
+import MultimodalCaptureScreenshotPy from '/snippets/javascript/code-samples/multimodal-capture-screenshot-py.mdx';
+import MultimodalCaptureScreenshotJs from '/snippets/javascript/code-samples/multimodal-capture-screenshot-js.mdx';
 
 Deep Agents supports multimodal workflows when you use a [Large Language Model](/oss/javascript/integrations/chat) that accepts multimodal inputs and tool results or returns multimodal outputs. You can attach images and other media to user messages, read non-text files with the built-in `read_file` tool, and return multimodal content from custom tools.
 
@@ -53,7 +53,9 @@ The harness `read_file` tool returns [standard content blocks](/oss/javascript/l
 
 
 
-The return value is converted to a `ToolMessage` the model reads on the next turn. Access the normalized representation with `content_blocks` on the resulting message. For return-type options, serialization behavior, and MCP examples, see [Tool return values](/oss/javascript/langchain/tools#tool-return-values) and [Multimodal tool content](/oss/javascript/langchain/mcp#multimodal-tool-content).
+The return value is converted to a `ToolMessage` the model reads on the next turn. Access the normalized representation with `content_blocks` on the resulting message.
+
+
 
 <Tip>
 When a tool produces images or other large binary data, save the artifact to a [backend](/oss/javascript/deepagents/backends) and return a concise text description plus a path or URL. This keeps message history smaller and works better with [context compression](/oss/javascript/deepagents/context-engineering#context-compression).

@@ -4,13 +4,13 @@ description: Package per-provider and per-model defaults that Deep Agents applie
 tag: "Beta"
 ---
 
-import ProfilesHarnessRegisterPy from '/snippets/code-samples/profiles-harness-register-py.mdx';
-import ProfilesHarnessRegisterJs from '/snippets/code-samples/profiles-harness-register-js.mdx';
-import ProfilesProviderRegisterPy from '/snippets/code-samples/profiles-provider-register-py.mdx';
-import ProfilesLoadConfigPy from '/snippets/code-samples/profiles-load-config-py.mdx';
-import ProfilesLoadConfigJs from '/snippets/code-samples/profiles-load-config-js.mdx';
-import ProfilesSerializeJs from '/snippets/code-samples/profiles-serialize-js.mdx';
-import ProfilesPluginRegisterPy from '/snippets/code-samples/profiles-plugin-register-py.mdx';
+import ProfilesHarnessRegisterPy from '/snippets/python/code-samples/profiles-harness-register-py.mdx';
+import ProfilesHarnessRegisterJs from '/snippets/python/code-samples/profiles-harness-register-js.mdx';
+import ProfilesProviderRegisterPy from '/snippets/python/code-samples/profiles-provider-register-py.mdx';
+import ProfilesLoadConfigPy from '/snippets/python/code-samples/profiles-load-config-py.mdx';
+import ProfilesLoadConfigJs from '/snippets/python/code-samples/profiles-load-config-js.mdx';
+import ProfilesSerializeJs from '/snippets/python/code-samples/profiles-serialize-js.mdx';
+import ProfilesPluginRegisterPy from '/snippets/python/code-samples/profiles-plugin-register-py.mdx';
 
 **Harness profiles** let you package configuration that Deep Agents applies whenever a given provider or specific model is selected: system-prompt tweaks, tool description overrides, excluded tools or middleware, extra middleware, and general-purpose subagent edits. They are the main way to tune how the harness behaves for a particular model without changing your `create_deep_agent` call site. Use `HarnessProfile` when building profiles in Python; use `HarnessProfileConfig` when [loading or saving YAML/JSON files](#load-profiles-from-config-files). Deep Agents ships built-in harness profiles for OpenAI and Anthropic (Claude) models.
 
@@ -29,11 +29,11 @@ A `HarnessProfile` describes prompt-assembly, tool-visibility, middleware, and d
 
 
 <ResponseField name="base_system_prompt" type="string">
-    Replace the base Deep Agents system prompt (`CUSTOM` in [Prompt assembly](/oss/python/deepagents/customization#prompt-assembly)).
+    Replace the base Deep Agents system prompt (the `base` key in [System prompt](/oss/python/deepagents/customization#system-prompt)).
 </ResponseField>
 
 <ResponseField name="system_prompt_suffix" type="string">
-    Append text to the assembled base prompt (`SUFFIX` in [Prompt assembly](/oss/python/deepagents/customization#prompt-assembly)); applied to the main agent, declarative subagents, and the auto-added general-purpose subagent.
+    Append text after the caller's `suffix`, placed last in the assembled system prompt. Applied to the main agent, declarative subagents, and the auto-added general-purpose subagent.
 </ResponseField>
 
 <ResponseField name="tool_description_overrides" type="Mapping[str, str]">
@@ -45,11 +45,11 @@ A `HarnessProfile` describes prompt-assembly, tool-visibility, middleware, and d
 </ResponseField>
 
 <ResponseField name="excluded_middleware" type="frozenset[type[AgentMiddleware] | str]">
-    Strip specific middleware classes from the [default stack](/oss/python/deepagents/customization#default-stack-main-agent). Accepts middleware classes or string names.
+    Strip specific middleware classes from the [Deep Agents stack](/oss/python/deepagents/customization#deep-agents-stack). Accepts middleware classes or string names.
 </ResponseField>
 
 <ResponseField name="extra_middleware" type="Sequence[AgentMiddleware] | Callable[[], Sequence[AgentMiddleware]]">
-    Append middleware to every stack this profile applies to. See the [default middleware stack](/oss/python/deepagents/customization#middleware) for the built-in ordering.
+    Append middleware to every stack this profile applies to. See the [Deep Agents stack](/oss/python/deepagents/customization#full-stack) for the built-in ordering.
 </ResponseField>
 
 <ResponseField name="general_purpose_subagent" type="GeneralPurposeSubagentProfile">
@@ -60,7 +60,7 @@ A `HarnessProfile` describes prompt-assembly, tool-visibility, middleware, and d
 
 
 <Note>
-    Caller-supplied `system_prompt=` always sits at the front of the assembled prompt, and `system_prompt_suffix` always sits at the end—regardless of which model is selected. The same overlay rules apply to subagents: each subagent re-runs profile resolution against its own model. See [Prompt assembly](/oss/python/deepagents/customization#prompt-assembly) for the full per-case breakdown (main agent, subagents, and the general-purpose subagent).
+    Caller-supplied `system_prompt=` always sits at the front of the assembled prompt, and `system_prompt_suffix` always sits at the end—regardless of which model is selected. The same overlay rules apply to subagents: each subagent re-runs profile resolution against its own model. See [System prompt](/oss/python/deepagents/customization#system-prompt) for the full per-case breakdown (main agent, subagents, and the general-purpose subagent).
 </Note>
 
 
@@ -69,7 +69,7 @@ A `HarnessProfile` describes prompt-assembly, tool-visibility, middleware, and d
 <Warning>
     To run an agent without the `task` tool, see [Running without subagents](/oss/python/deepagents/subagents#running-without-subagents)—set `general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False)` and pass no synchronous subagents via `subagents=`. `SubAgentMiddleware` (and the `task` tool) is only attached when at least one synchronous subagent exists, so this configuration leaves it out cleanly. Async subagents are unaffected.
 
-    Listing `FilesystemMiddleware`, `SubAgentMiddleware`, or the internal permission middleware in `excluded_middleware` raises a `ValueError`—they're required scaffolding in the [default middleware stack](/oss/python/deepagents/customization#default-stack-main-agent). To hide their tools from the model without removing the middleware, use `excluded_tools` instead—see [Running without the default filesystem tools](/oss/python/deepagents/overview#virtual-filesystem-access).
+    Listing `FilesystemMiddleware`, `SubAgentMiddleware`, or the internal permission middleware in `excluded_middleware` raises a `ValueError`—they're required scaffolding in the [Deep Agents stack](/oss/python/deepagents/customization#deep-agents-stack). To hide their tools from the model without removing the middleware, use `excluded_tools` instead—see [Running without the default filesystem tools](/oss/python/deepagents/overview#virtual-filesystem-access).
 </Warning>
 
 Entries in `excluded_middleware` accept two forms:
@@ -103,7 +103,7 @@ When both a provider-level and a model-level profile exist, they are merged at r
 Re-registering under an existing key merges the new profile on top of the prior one—it does not replace it. See [Merge semantics](#merge-semantics) for the per-field rules.
 
 <Note>
-    There is no wildcard key that matches every provider. To apply the same overrides everywhere—say, dropping `TodoListMiddleware` regardless of which model is selected—register the profile under each provider key you use. Profiles are intended for adjustments that depend on the model being selected. Global adjustments that should apply regardless of model should be made on the `create_deep_agent` call site.
+    There is no wildcard key that matches every provider. To apply the same overrides everywhere—say, dropping `SummarizationMiddleware` regardless of which model is selected—register the profile under each provider key you use. Profiles are intended for adjustments that depend on the model being selected. Global adjustments that should apply regardless of model should be made on the `create_deep_agent` call site.
 </Note>
 
 

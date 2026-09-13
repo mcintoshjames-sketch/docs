@@ -1,9 +1,13 @@
 ---
-title: "Cohere reranker integration"
-description: "Integrate with the Cohere reranker retriever using LangChain Python."
+title: Cohere reranker integration
+description: Integrate with the Cohere reranker retriever using LangChain Python.
+integration:
+  name: Cohere reranker
+  pypi: langchain-cohere
 ---
 
-import LangchainCommunityUnmaintained from '/snippets/oss/langchain-community-unmaintained.mdx';
+
+import LangchainCommunityUnmaintained from '/snippets/python/oss/langchain-community-unmaintained.mdx';
 
 >[Cohere](https://cohere.ai/about) is a Canadian startup that provides natural language processing models that help companies improve human-machine interactions.
 
@@ -302,6 +306,9 @@ You can of course use this retriever within a QA pipeline
 
 
 ```python
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
 client = Client()
 prompt = client.pull_prompt("rlm/rag-prompt", include_model=True)
 
